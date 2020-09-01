@@ -2,10 +2,8 @@ package gr.codehub.copier;
 
 import gr.codehub.copier.exceptions.BusinessException;
 import gr.codehub.copier.exceptions.InvalidAgeException;
-import gr.codehub.copier.io.ByteIO;
-import gr.codehub.copier.io.DataIO;
-import gr.codehub.copier.io.LineIO;
-import gr.codehub.copier.io.ObjectIO;
+import gr.codehub.copier.io.*;
+import gr.codehub.copier.model.Car;
 import gr.codehub.copier.model.Person;
 
 import java.io.*;
@@ -51,12 +49,24 @@ public class Main {
     }
 
     private static void testObjectIO() {
-        System.out.println("Copying an object to a new object");
+        System.out.println("Copying an object to a new object using files");
         try {
-            Person i1 = new Person("John", 24);
-            ObjectIO.saveObject(ROOT + "object_io.txt", i1);
-            Person i2 = (Person) ObjectIO.readObject(ROOT + "object_io.txt");
-            System.out.println(i2.getName() + " is " + i2.getAge() + " years old");
+            Person p1 = new Person("John", 24);
+            ObjectIO.saveObject(ROOT + "object_io.txt", p1);
+            Person p2 = (Person) ObjectIO.readObject(ROOT + "object_io.txt");
+            System.out.println(p2.getName() + " is " + p2.getAge() + " years old");
+        } catch (Exception e) {
+            System.out.println("Error: It was not possible to copy the object.");
+        }
+    }
+
+    private static void testMemoryIO() {
+        System.out.println("Copying an object to a new object in memory");
+        try {
+            MemoryIO<Car> mio = new MemoryIO<>();
+            Car c1 = new Car("Ford Model T", 999999);
+            Car c2 = mio.copyObject(c1);
+            System.out.println(c2.getModel() + " costs $" + c2.getPrice() + "");
         } catch (Exception e) {
             System.out.println("Error: It was not possible to copy the object.");
         }
@@ -99,6 +109,9 @@ public class Main {
 
         System.out.println("\n==== TESTING OBJECT IO ====");
         testObjectIO();
+
+        System.out.println("\n==== TESTING MEMORY IO ====");
+        testMemoryIO();
 
         System.out.println("\n==== TESTING SET AGE ====");
         int result = setAgeHandleException();
